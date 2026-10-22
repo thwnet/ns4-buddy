@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Datenschutzerklärung · NS4 Buddy</title>
+  <title>Privacy policy · NS4 Buddy</title>
   <style>
     :root { color-scheme: light; }
     body { margin: 0; font: 18px/1.55 "Iowan Old Style", Palatino, Georgia, serif; color: #1c1c1c; background: #f7f5f2; }
@@ -17,14 +17,22 @@
     nav { margin: 1.2rem 0 2rem; }
     nav a { margin-right: 1rem; }
     address { font-style: normal; margin: 0.6rem 0; }
-    hr { border: 0; border-top: 1px solid #ddd; margin: 3rem 0; }
+    section { display: none; }
+    #en { display: block; }
+    main:has(:target) section { display: none; }
+    main:has(:target) section:target { display: block; }
+    main:not(:has(:target)) nav a[href="#en"],
+    main:has(#en:target) nav a[href="#en"],
+    main:has(#de:target) nav a[href="#de"],
+    main:has(#it:target) nav a[href="#it"],
+    main:has(#es:target) nav a[href="#es"] { font-weight: 600; text-decoration: none; }
   </style>
 </head>
 <body>
   <main>
     <nav>
-      <a href="#de">Deutsch</a>
       <a href="#en" lang="en">English</a>
+      <a href="#de" lang="de">Deutsch</a>
       <a href="#it" lang="it">Italiano</a>
       <a href="#es" lang="es">Español</a>
     </nav>
@@ -66,8 +74,6 @@
       <p>Kommt in der App etwas dazu, das neue Daten speichert, sendet oder löscht, wird diese Erklärung in allen vier Sprachen nachgeführt. Die neue Fassung trägt ein neues Datum.</p>
     </section>
 
-    <hr>
-
     <section id="en" lang="en">
       <h1>Privacy policy</h1>
       <p class="meta">NS4 Buddy · 22 October 2026</p>
@@ -105,8 +111,6 @@
       <p>When the app adds something that stores, sends or deletes new data, this policy is updated in all four languages. The new version carries a new date.</p>
     </section>
 
-    <hr>
-
     <section id="it" lang="it">
       <h1>Informativa sulla privacy</h1>
       <p class="meta">NS4 Buddy · 22 ottobre 2026</p>
@@ -143,8 +147,6 @@
       <h2>Modifiche</h2>
       <p>Se l’app aggiunge qualcosa che memorizza, invia o cancella dati nuovi, questa informativa viene aggiornata in tutte e quattro le lingue. La nuova versione porta una nuova data.</p>
     </section>
-
-    <hr>
 
     <section id="es" lang="es">
       <h1>Política de privacidad</h1>
