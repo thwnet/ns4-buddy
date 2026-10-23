@@ -3,24 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem("ns4-theme"); } catch (e) {}
+      var theme = saved === "light" || saved === "dark" ? saved : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
   <title>Privacy policy · NS4 Buddy</title>
   <style>
-    :root { color-scheme: light; }
-    body { margin: 0; font: 18px/1.55 "Iowan Old Style", Palatino, Georgia, serif; color: #1c1c1c; background: #f7f5f2; }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0c0c0e;
+      --text: #f4f4f5;
+      --soft: #a1a1aa;
+      --link: #f0b4b8;
+      --chip: #2a2a2e;
+      --chip-text: #fff;
+    }
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f5f2;
+      --text: #1c1c1c;
+      --soft: #5c5c63;
+      --link: #7a2430;
+      --chip: #e4e1db;
+      --chip-text: #1c1c1c;
+    }
+    body { margin: 0; font: 18px/1.55 "Iowan Old Style", Palatino, Georgia, serif; color: var(--text); background: var(--bg); }
     main { max-width: 40rem; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
     h1 { font-weight: 600; font-size: 2.1rem; letter-spacing: -0.02em; margin: 0 0 0.3rem; }
     h2 { font-size: 1.25rem; margin: 2.2rem 0 0.5rem; }
     p, li { margin: 0.55rem 0; }
     ul { padding-left: 1.2rem; }
-    a { color: #7a2430; }
-    .meta { color: #555; }
-    nav { margin: 1.2rem 0 2rem; }
+    a { color: var(--link); }
+    .meta { color: var(--soft); }
+    nav { margin: 1.2rem 0 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.2rem; }
     nav a { margin-right: 1rem; }
+    .theme { margin-left: auto; display: flex; gap: 0.35rem; }
+    .theme button {
+      font: inherit;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--soft);
+      padding: 0.35rem 0.6rem;
+    }
+    .theme button[aria-pressed="true"] { color: var(--chip-text); background: var(--chip); }
+    @media (max-width: 640px) {
+      .theme { margin-left: 0; flex-basis: 100%; }
+    }
     address { font-style: normal; margin: 0.6rem 0; }
     section { display: none; }
-    #en { display: block; }
-    main:has(:target) section { display: none; }
-    main:has(:target) section:target { display: block; }
+    html:not(:has(:target)) #en { display: block; }
+    section:target { display: block; }
     main:not(:has(:target)) nav a[href="#en"],
     main:has(#en:target) nav a[href="#en"],
     main:has(#de:target) nav a[href="#de"],
@@ -35,6 +73,10 @@
       <a href="#de" lang="de">Deutsch</a>
       <a href="#it" lang="it">Italiano</a>
       <a href="#es" lang="es">Español</a>
+      <div class="theme">
+        <button type="button" data-theme="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme="dark" aria-pressed="true">Dark</button>
+      </div>
     </nav>
 
     <section id="de" lang="de">
@@ -185,5 +227,40 @@
       <p>Si la app añade algo que guarda, envía o borra datos nuevos, esta política se actualiza en los cuatro idiomas. La nueva versión lleva una fecha nueva.</p>
     </section>
   </main>
+  <script>
+    var themeLabels = {
+      de: ["Hell", "Dunkel"],
+      en: ["Light", "Dark"],
+      it: ["Chiaro", "Scuro"],
+      es: ["Claro", "Oscuro"]
+    };
+
+    function paintTheme(next) {
+      document.documentElement.setAttribute("data-theme", next);
+      document.querySelectorAll(".theme button").forEach(function (button) {
+        button.setAttribute("aria-pressed", button.getAttribute("data-theme") === next ? "true" : "false");
+      });
+    }
+
+    function applyTheme(next) {
+      paintTheme(next);
+      try { localStorage.setItem("ns4-theme", next); } catch (e) {}
+    }
+
+    function themeLanguage() {
+      var id = location.hash.replace("#", "");
+      var words = themeLabels[id] || themeLabels.en;
+      var buttons = document.querySelectorAll(".theme button");
+      buttons[0].textContent = words[0];
+      buttons[1].textContent = words[1];
+    }
+
+    document.querySelectorAll(".theme button").forEach(function (button) {
+      button.addEventListener("click", function () { applyTheme(button.getAttribute("data-theme")); });
+    });
+    window.addEventListener("hashchange", themeLanguage);
+    themeLanguage();
+    paintTheme(document.documentElement.getAttribute("data-theme") || "light");
+  </script>
 </body>
 </html>
