@@ -79,6 +79,28 @@
     }
     article { padding: 2.2rem 0 1rem; }
     article img { width: 100%; height: auto; border-radius: 18px; display: block; margin: 1.1rem 0; }
+    .film { margin: 1.6rem 0 0.2rem; }
+    .film .stage { position: relative; aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden; background: #111; }
+    .film button {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border: 0; padding: 0; cursor: pointer; background: #111;
+    }
+    .film img { width: 100%; height: 100%; object-fit: cover; margin: 0; border-radius: 0; }
+    .film .mark {
+      position: absolute; left: 50%; top: 50%;
+      width: 4.25rem; height: 3rem; margin: -1.5rem 0 0 -2.125rem;
+      background: #a22830; border-radius: 12px;
+      display: grid; place-items: center;
+    }
+    .film .mark::before {
+      content: "";
+      border-style: solid;
+      border-width: 0.5rem 0 0.5rem 0.85rem;
+      border-color: transparent transparent transparent #fff;
+      margin-left: 0.15rem;
+    }
+    .film iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .film figcaption { color: var(--soft); font-size: 0.88rem; margin-top: 0.35rem; }
     .shots { display: grid; gap: 1.5rem; margin: 1.8rem 0 0.2rem; }
     .shots figure { margin: 0; }
     .shots img { margin: 0; }
@@ -128,6 +150,16 @@
     <p data-de="Anschliessen ist sehr einfach: Du nimmst ein USB-C-auf-USB-B-Kabel und verbindest dein iPad direkt mit dem Nord Stage 4." data-en="Connecting is simple: use a USB-C to USB-B cable and plug your iPad straight into your Nord Stage 4." data-it="Collegare è semplice: prendi un cavo da USB-C a USB-B e colleghi l’iPad direttamente al Nord Stage 4." data-es="Conectar es sencillo: usa un cable de USB-C a USB-B y conecta el iPad directamente al Nord Stage 4.">Connecting is simple: use a USB-C to USB-B cable and plug your iPad straight into your Nord Stage 4.</p>
     <p data-de="Es gibt noch viele weitere Features und Einstellungsmöglichkeiten. Für den Soundcheck kannst du zum Beispiel ein paar MIDI-Dateien aufnehmen und abspielen lassen. Dann gehst du entspannt in den Saal und hörst, wie sich dein Nord Stage 4 im Publikum anhört." data-en="There are many more features and settings. For soundcheck, for example, you can record a few MIDI files and play them back. Then you walk into the hall and listen to how your Nord Stage 4 sounds from the audience." data-it="Ci sono molte altre funzioni e impostazioni. Per il soundcheck, per esempio, puoi registrare alcuni file MIDI e farli suonare. Poi vai tranquillo in sala e ascolti come suona il tuo Nord Stage 4 dal pubblico." data-es="Hay muchas más funciones y ajustes. Para el soundcheck, por ejemplo, puedes grabar unos archivos MIDI y reproducirlos. Luego entras tranquilo en la sala y escuchas cómo suena tu Nord Stage 4 desde el público.">There are many more features and settings. For soundcheck, for example, you can record a few MIDI files and play them back. Then you walk into the hall and listen to how your Nord Stage 4 sounds from the audience.</p>
     
+    <figure class="film">
+      <div class="stage">
+        <button type="button" data-id="ATpjKbx-RVU" data-label-de="Video abspielen" data-label-en="Play the video" data-label-it="Riproduci il video" data-label-es="Reproducir el vídeo" aria-label="Play the video">
+          <img src="bilder/setlist.jpg" alt="">
+          <span class="mark" aria-hidden="true"></span>
+        </button>
+      </div>
+      <figcaption data-de="Eine Setlist anlegen. Das Video startet erst nach dem Tipp." data-en="Building a setlist. The video starts only after a tap." data-it="Creare una setlist. Il video parte solo dopo il tocco." data-es="Crear una setlist. El vídeo empieza solo tras un toque.">Building a setlist. The video starts only after a tap.</figcaption>
+    </figure>
+
     <div class="shots">
       <figure>
         <img src="bilder/setlist.jpg" alt="Setlist on stage">
@@ -172,6 +204,10 @@
         var value = el.getAttribute("data-" + next);
         if (value) el.textContent = value;
       });
+      document.querySelectorAll("[data-label-de]").forEach(function (el) {
+        var label = el.getAttribute("data-label-" + next);
+        if (label) el.setAttribute("aria-label", label);
+      });
       document.querySelectorAll(".lang button").forEach(function (button) {
         button.setAttribute("aria-pressed", button.getAttribute("data-lang") === next ? "true" : "false");
       });
@@ -202,6 +238,18 @@
     var savedLang = null;
     try { savedLang = localStorage.getItem("ns4-lang"); } catch (e) {}
     apply(savedLang === "de" || savedLang === "it" || savedLang === "es" ? savedLang : "en");
+
+    document.querySelectorAll(".film button").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var caption = button.closest("figure").querySelector("figcaption");
+        var frame = document.createElement("iframe");
+        frame.src = "https://www.youtube-nocookie.com/embed/" + button.getAttribute("data-id") + "?autoplay=1&rel=0";
+        frame.title = caption ? caption.textContent : "NS4 Buddy";
+        frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        frame.allowFullscreen = true;
+        button.replaceWith(frame);
+      });
+    });
 
   </script>
 </body>
