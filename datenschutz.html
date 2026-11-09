@@ -258,7 +258,28 @@
     document.querySelectorAll(".theme button").forEach(function (button) {
       button.addEventListener("click", function () { applyTheme(button.getAttribute("data-theme")); });
     });
-    window.addEventListener("hashchange", themeLanguage);
+    function rememberLanguage() {
+      var id = location.hash.replace("#", "");
+      if (id === "de" || id === "en" || id === "it" || id === "es") {
+        try { localStorage.setItem("ns4-lang", id); } catch (e) {}
+      }
+    }
+
+    function openSavedLanguage() {
+      if (location.hash) {
+        rememberLanguage();
+        return;
+      }
+      var saved = null;
+      try { saved = localStorage.getItem("ns4-lang"); } catch (e) {}
+      if (saved === "de" || saved === "it" || saved === "es") location.replace("#" + saved);
+    }
+
+    window.addEventListener("hashchange", function () {
+      themeLanguage();
+      rememberLanguage();
+    });
+    openSavedLanguage();
     themeLanguage();
     paintTheme(document.documentElement.getAttribute("data-theme") || "light");
   </script>
